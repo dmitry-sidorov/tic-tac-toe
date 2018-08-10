@@ -47,18 +47,18 @@
 // game.play(3);
 
 
-const cellFactory = function (id, value = null) {
+const cellFactory = function(id, value = null) {
   return {id, value};
 }
 
 
 const gameboard = (function() {
-  var cells = [];
-  for (var i = 1; i < 10; i++) {
-    var cell = cellFactory(i);
-    cells.push(cell);
-  }
-  return {cells};
+    var cells = [];
+    for (var i = 0; i < 9; i++) {
+      var cell = cellFactory(i);
+      cells.push(cell);
+    }
+    return {cells};
 })();
 
 console.log(gameboard.cells);
@@ -67,9 +67,13 @@ console.log(gameboard.cells);
 
 
 
-const fieldController = (function() {
+const displayController = (function() {
+  $('button').text('');
   $('button').on('click', function(e) {
-    console.log('Cell', e.target.id, 'clicked!');
+    var id = e.target.id;
+    console.log('Cell', id, 'clicked!');
+    console.log(gameboard.cells[id].value);
+
   });
 })();
 
@@ -82,12 +86,14 @@ const playerFactory = function (isX, name = 'John Doe', score = 0) {
   return {name, isX, score};
 }
 
-const playerController = (function() {
+const model = (function() {
   var player1 = playerFactory(true, 'Player1');
   var player2 = playerFactory(false, 'Player2');
+  var status = 'x';
   console.log(player1);
   console.log(player2);
 })();
+
 
 
 
