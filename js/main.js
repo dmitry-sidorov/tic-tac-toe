@@ -47,7 +47,7 @@
 // game.play(3);
 
 
-const cellFactory = function(id, value = null) {
+const cellFactory = function(id, value = '') {
   return {id, value};
 }
 
@@ -55,16 +55,44 @@ const cellFactory = function(id, value = null) {
 const gameboard = (function() {
     var cells = [];
     for (var i = 0; i < 9; i++) {
-      var cell = cellFactory(i);
-      cells.push(cell);
+      cells.push(cellFactory(i));
     }
+    var rounds = 0;
+    const setFirst = function() {
+      if (rounds % 2 == 0) {
+        player1.isX();
+        player2.isO();
+      } else {
+          player1.isO();
+          player2.isX();
+      }
+    }
+    // for (var i = 0; i < 9; i++) {
+      // var cell = cellFactory(i);
+      // cells.push(cell);
+    // }
     return {cells};
 })();
 
 console.log(gameboard.cells);
 
+const playerFactory = function (name, status = '', score = 0) {
+  const isX = function() {
+    status = 'x';
+  }
+  const isO = function() {
+    status = 'o';
+  }
+  return {name, status, score, isX, isO};
+}
 
-
+const gameController = (function() {
+  var player1 = playerFactory('Player1');
+  var player2 = playerFactory('Player2');
+  console.log(player1);
+  console.log(player2);
+  return {player1, player2};
+})();
 
 
 const displayController = (function() {
@@ -72,9 +100,14 @@ const displayController = (function() {
   $('button').on('click', function(e) {
     var id = e.target.id;
     console.log('Cell', id, 'clicked!');
-    console.log(gameboard.cells[id].value);
-
+    console.log(gameboard.cells[id]);
   });
+  console.log(gameController.player1);
+  const render = function() {
+    for (var i = 0; i < gameboard.cells.length; i++) {
+      $('button').filter(i).text(gameboard.cells[i].value);
+    }
+  }
 })();
 
 
@@ -82,17 +115,7 @@ const displayController = (function() {
 
 
 
-const playerFactory = function (isX, name = 'John Doe', score = 0) {
-  return {name, isX, score};
-}
 
-const model = (function() {
-  var player1 = playerFactory(true, 'Player1');
-  var player2 = playerFactory(false, 'Player2');
-  var status = 'x';
-  console.log(player1);
-  console.log(player2);
-})();
 
 
 
