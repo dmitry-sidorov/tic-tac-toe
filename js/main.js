@@ -46,68 +46,90 @@
 // game.play(2);
 // game.play(3);
 
+const playerFactory = function (name, status, score = 0) {
+  const setX = function() {
+    this.status = 'x';
+  }
+  const setO = function() {
+    this.status = 'o';
+  }
+  const getStatus = function() {
+    return this.status;
+  }
+  return {name, score, setX, setO, getStatus};
+}
+var player1 = playerFactory('Player1');
+var player2 = playerFactory('Player2');
+
+console.log(player1.getStatus());
+console.log(player2.getStatus());
+
+
+const gameController = (function() {
+  var rounds = 0;
+
+  const prioritize = function() {
+    if (rounds % 2 == 0) {
+      // player1.status = 'x';
+      // player2.status = 'o';
+      player1.setX();
+      player2.setO();
+    } else {
+        // player2.status = 'x';
+        // player1.status = 'o';
+        player2.setX();
+        player1.setO();
+    }
+  }
+
+  return {prioritize};
+})();
 
 const cellFactory = function(id, value = '') {
   return {id, value};
 }
 
-
 const gameboard = (function() {
     var cells = [];
     for (var i = 0; i < 9; i++) {
-      cells.push(cellFactory(i));
+      cells.push('');
     }
     var rounds = 0;
-    const setFirst = function() {
+    // const setFirst = function() {
       if (rounds % 2 == 0) {
-        player1.isX();
-        player2.isO();
+        player1.setX();
+        player2.setO();
       } else {
-          player1.isO();
-          player2.isX();
+          player1.setO();
+          player2.setX();
       }
-    }
+    // }
     // for (var i = 0; i < 9; i++) {
       // var cell = cellFactory(i);
       // cells.push(cell);
     // }
-    return {cells};
+    return {cells, rounds};
 })();
 
 console.log(gameboard.cells);
 
-const playerFactory = function (name, status = '', score = 0) {
-  const isX = function() {
-    status = 'x';
-  }
-  const isO = function() {
-    status = 'o';
-  }
-  return {name, status, score, isX, isO};
-}
 
-const gameController = (function() {
-  var player1 = playerFactory('Player1');
-  var player2 = playerFactory('Player2');
-  console.log(player1);
-  console.log(player2);
-  return {player1, player2};
-})();
+
 
 
 const displayController = (function() {
-  $('button').text('');
   $('button').on('click', function(e) {
     var id = e.target.id;
     console.log('Cell', id, 'clicked!');
     console.log(gameboard.cells[id]);
   });
-  console.log(gameController.player1);
+  console.log(player1);
   const render = function() {
     for (var i = 0; i < gameboard.cells.length; i++) {
-      $('button').filter(i).text(gameboard.cells[i].value);
+      $('#' + i).text(gameboard.cells[i].toUpperCase());
     }
   }
+  return {render};
 })();
 
 
