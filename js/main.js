@@ -46,18 +46,19 @@
 // game.play(2);
 // game.play(3);
 
-const playerFactory = function (name, status, score = 0) {
-  const setX = function() {
+const playerFactory = (name, score = 0) => {
+  const setX = () => {
     this.status = 'x';
   }
-  const setO = function() {
+  const setO = () => {
     this.status = 'o';
   }
-  const getStatus = function() {
+  const getStatus = () => {
     return this.status;
   }
   return {name, score, setX, setO, getStatus};
 }
+
 var player1 = playerFactory('Player1');
 var player2 = playerFactory('Player2');
 
@@ -65,11 +66,21 @@ console.log(player1.getStatus());
 console.log(player2.getStatus());
 
 
-const gameController = (function() {
+const gameController = (() => {
   var rounds = 0;
 
-  const prioritize = function() {
-    if (rounds % 2 == 0) {
+  const setRounds = (value) => {
+    if (typeof value == 'number') {
+      this.rounds = value;
+    }
+  }
+
+  const getRounds = () => {
+    return this.rounds;
+  }
+
+  const prioritize = () => {
+    if (this.rounds % 2 == 0) {
       // player1.status = 'x';
       // player2.status = 'o';
       player1.setX();
@@ -82,7 +93,7 @@ const gameController = (function() {
     }
   }
 
-  return {prioritize};
+  return {prioritize, setRounds, getRounds};
 })();
 
 const cellFactory = function(id, value = '') {
@@ -94,21 +105,7 @@ const gameboard = (function() {
     for (var i = 0; i < 9; i++) {
       cells.push('');
     }
-    var rounds = 0;
-    // const setFirst = function() {
-      if (rounds % 2 == 0) {
-        player1.setX();
-        player2.setO();
-      } else {
-          player1.setO();
-          player2.setX();
-      }
-    // }
-    // for (var i = 0; i < 9; i++) {
-      // var cell = cellFactory(i);
-      // cells.push(cell);
-    // }
-    return {cells, rounds};
+    return {cells};
 })();
 
 console.log(gameboard.cells);
@@ -132,7 +129,17 @@ const displayController = (function() {
   return {render};
 })();
 
-
+console.log('Testing...');
+gameController.prioritize();
+console.log('---gameController---');
+console.log('.rounds ->',gameController.rounds);
+console.log('.getRounds() ->',gameController.getRounds());
+console.log('---players---');
+console.log('player1.status ->', player1.status);
+console.log('player1.getStatus() ->', player1.getStatus());
+console.log('player2.status ->', player2.status);
+console.log('player2.getStatus() ->', player2.getStatus());
+console.log('...End');
 
 
 
