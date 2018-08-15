@@ -46,124 +46,118 @@
 // game.play(2);
 // game.play(3);
 
-const playerFactory = (name, score = 0) => {
-  const setX = () => {
-    this.status = 'x';
+
+
+
+// Model Module *******************
+const model = (() => {
+
+  const playerFactory = (name, score = 0) => {
+    const setX = () => {
+      this.status = 'x';
+    }
+    const setO = () => {
+      this.status = 'o';
+    }
+    const getStatus = () => {
+      return this.status;
+    }
+    return {name, score, setX, setO, getStatus};
   }
-  const setO = () => {
-    this.status = 'o';
+
+  var player1 = playerFactory('Player1');
+  var player2 = playerFactory('Player2');
+
+
+  var game = {
+    moves: 0,
+    rounds: 0
   }
-  const getStatus = () => {
-    return this.status;
+
+
+  var gameboard = [];
+    for (var i = 0; i < 9; i++) {
+      gameboard.push('');
   }
-  return {name, score, setX, setO, getStatus};
-}
 
-var player1 = playerFactory('Player1');
-var player2 = playerFactory('Player2');
+  var activePlayer = player1;
+  prioritize();
 
-console.log(player1.getStatus());
-console.log(player2.getStatus());
+  // function calculateActivePlayer() {
+    // if (game.rounds % 2 == 0) {
+      // if (game.moves % 2 == 0) {
+        // activePlayer = player1;
+  //     } else activePlayer = player2;
+  //   } else activePlayer = player2;
+  // }
 
-
-const gameController = (() => {
-  var rounds = 0;
-
-  const setRounds = (value) => {
-    if (typeof value == 'number') {
-      this.rounds = value;
+  function switchActivePlayer() {
+    switch (activePlayer) {
+      case player1: activePlayer = player2;
+      break;
+      case player2: activePlayer = player1;
+      break;
     }
   }
 
-  const getRounds = () => {
-    return this.rounds;
+  const increaseRounds = () => {
+    game.rounds += 1;
+  }
+  const increaseMoves = () => {
+    game.moves += 1;
+  }
+  const initGame = () => {
+    game.rounds = 0;
+    game.moves = 0;
   }
 
-  const prioritize = () => {
+  function prioritize() {
     if (this.rounds % 2 == 0) {
-      // player1.status = 'x';
-      // player2.status = 'o';
       player1.setX();
       player2.setO();
     } else {
-        // player2.status = 'x';
-        // player1.status = 'o';
         player2.setX();
         player1.setO();
     }
   }
 
-  return {prioritize, setRounds, getRounds};
+  function cellClicked(currentId) {
+    gameboard[currentId] = activePlayer.getStatus();
+    increaseMoves();
+    switchActivePlayer();
+    view.render();
+  }
+
+  return {prioritize, switchActivePlayer, gameboard, cellClicked};
 })();
-
-const cellFactory = function(id, value = '') {
-  return {id, value};
-}
-
-const gameboard = (function() {
-    var cells = [];
-    for (var i = 0; i < 9; i++) {
-      cells.push('');
-    }
-    return {cells};
-})();
-
-console.log(gameboard.cells);
-
-
-
-
-
-const displayController = (function() {
-  $('button').on('click', function(e) {
-    var id = e.target.id;
-    console.log('Cell', id, 'clicked!');
-    console.log(gameboard.cells[id]);
-  });
-  console.log(player1);
-  const render = function() {
-    for (var i = 0; i < gameboard.cells.length; i++) {
-      $('#' + i).text(gameboard.cells[i].toUpperCase());
+//*******************
+//
+//
+// View Module ****************
+const view = (() => {
+  const render = () => {
+    for (var i = 0; i < model.gameboard.length; i++) {
+      $('#' + i).text(model.gameboard[i].toUpperCase());
     }
   }
   return {render};
 })();
+//*******************
+//
+//
+// Controller Module *******************
+const controller = (function() {
+  view.render();
+  $('button').on('click', function(e) {
+    var id = parseInt(e.target.id);
+    model.cellClicked(id);
+    console.log('Cell', id, 'clicked!');
+    console.log('typeof id', typeof id);
+    console.log(model.gameboard[id]);
+  });
 
-console.log('Testing...');
-gameController.prioritize();
-console.log('---gameController---');
-console.log('.rounds ->',gameController.rounds);
-console.log('.getRounds() ->',gameController.getRounds());
-console.log('---players---');
-console.log('player1.status ->', player1.status);
-console.log('player1.getStatus() ->', player1.getStatus());
-console.log('player2.status ->', player2.status);
-console.log('player2.getStatus() ->', player2.getStatus());
-console.log('...End');
+})();
+//*******************
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// gameboard object module
-  // >> sqare object * 9
-// gameboardController module
-
-
-// player object * 2
-// playersController module
-
-
-// displayController
-// gameController
 
 //
